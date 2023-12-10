@@ -1,0 +1,21 @@
+{
+  "name": "NetBox Dev Container",
+  "dockerComposeFile": ["../docker-compose.yml", "../docker-compose.override.yml", "./docker-compose.override.yml"],
+  "service": "netbox-devcontainer",
+  "shutdownAction": "stopCompose",
+  "workspaceFolder": "/app",
+  "remoteUser": "netbox",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.black-formatter",
+        "GitHub.copilot",
+        "dbaeumer.vscode-eslint",
+        "mutantdino.resourcemonitor",
+        "batisteo.vscode-django",
+        "esbenp.prettier-vscode"
+      ]
+    }
+  }
+}
