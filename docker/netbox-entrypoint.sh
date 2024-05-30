@@ -20,7 +20,6 @@ if ! /opt/netbox/netbox/manage.py migrate --check >/dev/null 2>&1; then
   /opt/netbox/netbox/manage.py remove_stale_contenttypes --no-input
   /opt/netbox/netbox/manage.py reindex --lazy
   /opt/netbox/netbox/manage.py clearsessions
-  /opt/netbox/netbox/manage.py clearcache
 fi
 
 exec "$@"

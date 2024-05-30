@@ -1,18 +1,11 @@
-version: '3.8'
-
 services:
-  netbox: &netbox
-    image: netbox:devcontainer-${VERSION}
+  netbox:
+    image: netbox-devcontainer:${VERSION}
     build:
       context: .
       dockerfile: Dockerfile
       args:
         - VERSION=${VERSION}
-    env_file:
-      - env/netbox.env
-      - env/postgres.env
-      - env/redis.env
-      - env/redis-cache.env
     depends_on:
       postgres:
         condition: service_healthy
@@ -20,8 +13,13 @@ services:
         condition: service_started
       redis-cache:
         condition: service_started
+    env_file:
+      - env/netbox.env
+      - env/postgres.env
+      - env/redis.env
+      - env/redis-cache.env
     healthcheck:
-      test: "curl -f http://localhost:8000/api/ || exit 1"
+      test: "curl -f http://localhost:8000/login/ || exit 1"
       interval: 15s
       timeout: 3s
       retries: 5
@@ -33,30 +31,52 @@ services:
       - ./configuration:/opt/netbox/netbox/netbox/configuration:rw
 
   netbox-worker:
-    <<: *netbox
+    image: netbox-devcontainer:${VERSION}
     depends_on:
       netbox:
         condition: service_healthy
+    env_file:
+      - env/netbox.env
+      - env/postgres.env
+      - env/redis.env
+      - env/redis-cache.env
     command: /opt/netbox/venv/bin/python /opt/netbox/netbox/manage.py rqworker
     healthcheck:
       test: "ps -aux | grep -v grep | grep -q rqworker || exit 1"
       interval: 15s
       timeout: 3s
       start_period: 20s
+    volumes:
+      - media-files:/opt/netbox/netbox/media:rw
+      - reports-files:/opt/netbox/netbox/reports:rw
+      - scripts-files:/opt/netbox/netbox/scripts:rw
+      - ./plugins:/opt/plugins:rw
+      - ./configuration:/opt/netbox/netbox/netbox/configuration:rw
 
   netbox-housekeeping:
-    <<: *netbox
+    image: netbox-devcontainer:${VERSION}
     depends_on:
       netbox:
         condition: service_healthy
-    command: /opt/netbox/housekeeping.sh
+    env_file:
+      - env/netbox.env
+      - env/postgres.env
+      - env/redis.env
+      - env/redis-cache.env
+    command: /opt/netbox/netbox-housekeeping.sh
     healthcheck:
       test: "ps -aux | grep -v grep | grep -q housekeeping || exit 1"
       interval: 15s
       timeout: 3s
+    volumes:
+      - media-files:/opt/netbox/netbox/media:rw
+      - reports-files:/opt/netbox/netbox/reports:rw
+      - scripts-files:/opt/netbox/netbox/scripts:rw
+      - ./plugins:/opt/plugins:rw
+      - ./configuration:/opt/netbox/netbox/netbox/configuration:rw
 
   postgres:
-    image: postgres:15-alpine
+    image: postgres:16-alpine
     env_file: env/postgres.env
     healthcheck:
       test: "pg_isready -U $$POSTGRES_USER || exit 1"

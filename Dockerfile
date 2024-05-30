@@ -1,4 +1,4 @@
-FROM python:3.11-bullseye
+FROM python:3.12
 
 ARG VERSION=master
 
@@ -38,9 +38,9 @@ RUN python3 -m venv /opt/netbox/venv \
 
 WORKDIR /opt/netbox/
 
-COPY docker/docker-entrypoint.sh .
-COPY docker/launch-netbox.sh .
-COPY docker/housekeeping.sh .
+COPY docker/netbox-entrypoint.sh .
+COPY docker/netbox-launch.sh .
+COPY docker/netbox-housekeeping.sh .
 
-ENTRYPOINT [ "./docker-entrypoint.sh" ]
-CMD [ "./launch-netbox.sh" ]
+ENTRYPOINT [ "./netbox-entrypoint.sh" ]
+CMD [ "./netbox-launch.sh" ]

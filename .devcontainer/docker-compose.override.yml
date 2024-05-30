@@ -1,8 +1,6 @@
-version: '3.8'
-
 services:
   netbox-devcontainer:
-    image: netbox:devcontainer-${VERSION}-dev
+    image: netbox-devcontainer:dev-${VERSION}
     build:
       context: ./.devcontainer
       dockerfile: Dockerfile
