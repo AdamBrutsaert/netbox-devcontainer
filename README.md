@@ -9,6 +9,10 @@ It also contains some basic VSCode extensions for convenience.
 An instance of a development server of NetBox will be run so that it hot reloads whenever you make a modification.  
 Plugins under the folder [plugins](/plugins/) will be automatically installed as editable inside the virtual env.
 
+> [!WARNING]  
+> The first time you run the containers, it will take some time to run the migrations. You might want to increase the healthcheck interval for the netbox service inside the [docker-compose.yml](/docker-compose.yml) file.
+
+
 ## Configure NetBox Version
 
 You can set the version of NetBox inside the root [.env](/.env).  
